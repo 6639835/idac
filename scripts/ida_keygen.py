@@ -286,7 +286,9 @@ def main() -> int:
         return 1
     add_every_decompiler(license_obj)
     license_obj["signature"] = sign_hexlic(license_obj["payload"])
-    Path(OUTPUT_FILENAME).write_bytes(canonical_json(license_obj).encode())
+    Path(OUTPUT_FILENAME).write_text(
+        json.dumps(license_obj, indent=2) + "\n"
+    )
     print(f"Saved new license to {OUTPUT_FILENAME}")
 
     print("\nDiscovering IDA installs...")

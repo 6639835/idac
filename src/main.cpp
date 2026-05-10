@@ -28,6 +28,7 @@
 #include <openssl/sha.h>
 
 #include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
@@ -454,10 +455,14 @@ int main()
                   allocator);
 
     {
-        const auto serialized = canonical_json(doc);
+        rapidjson::StringBuffer buffer;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+        writer.SetIndent(' ', 2);
+        doc.Accept(writer);
         std::ofstream out(std::string(OUTPUT_FILENAME), std::ios::binary);
-        out.write(serialized.data(),
-                  static_cast<std::streamsize>(serialized.size()));
+        out.write(buffer.GetString(),
+                  static_cast<std::streamsize>(buffer.GetSize()));
+        out.put('\n');
     }
     std::cout << "Saved new license to " << OUTPUT_FILENAME << "\n";
 
